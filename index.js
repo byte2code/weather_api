@@ -16,6 +16,8 @@ const airQualityHandler = new AirQualityHandler({
 });
 
 const location_input = document.querySelector("#input_location");
+const aqi_indicator = document.getElementsByName("aqi_small_indicator");
+let currentAIQ = "";
 
 location_input.addEventListener(
   "input",
@@ -25,7 +27,7 @@ location_input.addEventListener(
     if (query.length)
       await locationHandler.getLocations(query, onClickListener, 5);
     else document.querySelector("#location_results").innerHTML = "";
-  }, 300)
+  }, 500)
 );
 
 const onClickListener = (e, loc) => {
@@ -59,10 +61,9 @@ async function setCurrentWeatherData(loc) {
   const sunset = document.getElementsByName("sunset");
   const windspeed = document.getElementsByName("windspeed");
   const humidity = document.getElementsByName("humidity");
-  const aqi_indicator = document.getElementsByName("aqi_small_indicator");
 
   if (hourlyIndex != 1) {
-    const currentAIQ = currentAirData.hourly.pm2_5[hourlyIndex];
+    currentAIQ = currentAirData.hourly.pm2_5[hourlyIndex];
 
     currTemp[0].innerHTML = hourly.temperature_2m[hourlyIndex];
     windspeed[0].innerHTML =
@@ -79,8 +80,6 @@ async function setCurrentWeatherData(loc) {
       daily.temperature_2m_max[0].toString() +
       hourlyUnits.temperature_2m.toString();
     aqi_indicator[0].innerHTML = currentAIQ;
-
-    handleAiq(currentAIQ, aqi_indicator[0]);
   } else throw new console.error("Something went wrong!");
 }
 
@@ -122,6 +121,14 @@ function debounce(func, delay) {
     return setTimeout(() => func.apply(context, args), delay);
   };
 }
+aqi_indicator[0].addEventListener("onmouseover", (e) => {
+  e.preventDefault();
+  handleAiq(currentAIQ, aqi_indicator[0]);
+});
+
+aqi_indicator[0].addEventListener("onmouseout", () => {
+  aqi_indicator[0].innerHTML = aiq;
+});
 
 function handleAiq(aiq, selector) {
   console.log(
@@ -130,16 +137,8 @@ function handleAiq(aiq, selector) {
   );
   const quality = airQualityHandler.checkAirQuality(aiq);
   const indicator = airQualityHandler.checkAirQualityIndicator(aiq);
+  selector.innerHTML = quality;
 
-  selector.addEventListener("onmouseover", (e) => {
-    e.preventDefault();
-    selector.innerHTML = quality;
-  });
-  selector.addEventListener("onmouseout", () => {
-    selector.innerHTML = aiq;
-  });
-
-  // selector.parentNode.style.backgroundColor = indicator;
   const OpacityColor = (hex, alpha) =>
     `${hex}${Math.floor(alpha * 255)
       .toString(16)

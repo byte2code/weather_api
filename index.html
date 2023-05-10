@@ -15,10 +15,13 @@
     <style type="text/tailwindcss">
       @layer components {
         .location_search_results {
-          @apply px-4 py-2 border-b-2 border-slate-400 cursor-pointer hover:bg-slate-500;
+          @apply px-4 py-2 border-b-2 border-slate-400 cursor-pointer hover:bg-slate-500 flex items-center;
         }
         .location_search_results span {
           @apply pl-2 text-sm text-slate-700;
+        }
+        .location_search_results img{
+          @apply mr-2
         }
       }
     </style>
@@ -45,7 +48,7 @@
               <input
                 type="text"
                 id="input_location"
-                class="w-full md:w-[60%] mx-auto bg-slate-300 rounded-full text-dark outline-0 px-6 py-2"
+                class="block w-full md:w-[60%] mx-auto bg-slate-300 rounded-full text-dark outline-0 px-6 py-2"
                 placeholder="Enter location"
               />
               <ul
